@@ -1,0 +1,31 @@
+    {% if is_paginated %}
+    	{% include 'partial/pagination.html' %}
+    {% endif %} 
+
+    <div class="row row-cols-3">
+
+        {% for product in object_list %}
+            <div class="col">
+                <div class="card my-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <h6 class="card-subtitle mb-2 text-body-secondary">{{ product.category }}</h6>
+                        <p class="card-text">{{ product.description }}</p>
+                        <img src="{{product.image}}" alt="Описание изображения">
+
+                        <a href="{% url 'reviewapp:article_view' pk=product.pk %}" class="card-link">Подробнее...</a>
+                    {% if perms.reviewapp.change_article or product.author == request.user %}
+                        <a href="{% url 'reviewapp:article_update_view' pk=product.pk %}" class="card-link">Редактировать</a>
+                    {% endif %}
+                    
+                    {% if perms.reviewapp.delete_article or product.name == request.user %}
+                        <a href="{% url 'reviewapp:article_delete_view' pk=product.pk %}" class="card-link">Удалить</a>
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p>Нет статей</p>
+
+        {% endfor %}
+    </div>

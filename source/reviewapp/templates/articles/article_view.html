@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }}{% endblock %}
+{% block menu %}
+    <a class="nav-link" aria-current="page" href="{% url 'reviewapp:index' %}">На главную</a>
+    {% if perms.reviewapp.change_article or product.author == request.user %}
+        <a class="nav-link" aria-current="page" href="{% url 'reviewapp:article_update_view' pk=products.pk %}">Редактировать</a>
+    {% endif %}
+    {% if perms.reviewapp.delete_article or product.author == request.user %}
+        <a class="nav-link" aria-current="page" href="{% url 'reviewapp:article_delete_view' pk=products.pk %}">Удалить</a>
+    {% endif %}
+
+
+    {% if request.user.is_authenticated %}
+        <a class="nav-link" aria-current="page" href="{% url 'reviewapp:comment_add' pk=products.pk %}">Добавить
+            комментарий</a>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <h1>Article</h1>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ products.name }}</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">{{ products.category }}</h6>
+            <p class="card-text">{{ products.description }}</p>
+            <p class="card-text">Average Rating: {{ average_rating| default:0 }}</p>
+            <img src="{{products.image}}" alt="Описание изображения">
+
+        </div>
+    </div>
+    <h3 class="mt-2">Reviews: </h3>
+    <div class="row row-cols-3 mt-2">
+        {% for review in reviews %}
+
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Автор: {{ review.author }}</h5>
+                        <p class="card-text">Отзыв:{{ review.description }}</p>
+                        <p class="card-text">Оценка:{{ review.rating }}</p>
+
+{#                        {% if perms.reviewapp.change_comment or review.author == request.user %}#}
+                            <a href="{% url 'reviewapp:comment_update_view' pk=review.pk %}"
+                               class="card-link">Редактировать</a>
+{#                        {% endif %}#}
+{#                        {% if perms.reviewapp.delete_comment or review.author == request.user %}#}
+                            <a href="{% url 'reviewapp:comment_delete_view' pk=review.pk %}" class="card-link">Удалить</a>
+{#                        {% endif %}#}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
